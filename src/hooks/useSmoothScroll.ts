@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import Lenis from '@studio-freight/lenis'
+import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -22,7 +22,6 @@ export function useSmoothScroll() {
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,
     })
