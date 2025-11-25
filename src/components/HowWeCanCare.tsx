@@ -59,7 +59,7 @@ export function HowWeCanCare() {
       scrollTrigger: {
         trigger: cardsRef.current,
         start: 'top 80%',
-        toggleActions: 'play none none reverse',
+        toggleActions: 'play none none none', // Changed: Don't reverse on scroll up
       },
     })
 

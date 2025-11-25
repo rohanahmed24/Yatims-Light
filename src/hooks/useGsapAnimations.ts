@@ -35,7 +35,7 @@ export function useFadeInUp(options: {
           trigger: ref.current,
           start: 'top 85%',
           end: 'bottom 15%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none', // Changed: Don't reverse
         },
       })
     })
@@ -73,7 +73,7 @@ export function useStaggerAnimation(options: {
         scrollTrigger: {
           trigger: ref.current,
           start: 'top 80%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none', // Changed: Don't reverse
         },
       })
     })
@@ -107,7 +107,7 @@ export function useScaleIn(options: {
         scrollTrigger: {
           trigger: ref.current,
           start: 'top 85%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none', // Changed: Don't reverse
         },
       })
     })
@@ -181,7 +181,7 @@ export function useTextReveal(options: {
         scrollTrigger: {
           trigger: ref.current,
           start: 'top 85%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none', // Changed: Don't reverse
         },
       })
     })
@@ -219,7 +219,7 @@ export function useCountUp(
         scrollTrigger: {
           trigger: ref.current,
           start: 'top 80%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none', // Changed: Don't reverse
         },
         onUpdate: () => {
           if (ref.current) {
