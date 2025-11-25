@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Play } from 'lucide-react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -11,6 +11,15 @@ export function Hero() {
   const heroRef = useRef<HTMLElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
   const quoteRef = useRef<HTMLParagraphElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  const handlePlayVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.play()
+      setIsPlaying(true)
+    }
+  }
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -147,22 +156,43 @@ export function Hero() {
 
           {/* Right Content */}
           <div className="space-y-6">
-            {/* Video Placeholder */}
-            <div className="video-placeholder relative aspect-video bg-navy-800 rounded-xl overflow-hidden border border-navy-700 group cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-primary-500/90 flex items-center justify-center group-hover:bg-primary-600 transition-colors group-hover:scale-110 duration-300">
-                  <Play className="w-6 h-6 text-white ml-1" fill="white" />
+            {/* Hero Video */}
+            <div className="video-placeholder relative aspect-video bg-navy-800 rounded-xl overflow-hidden border border-navy-700">
+              {/* Video Element */}
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                controls={isPlaying}
+                preload="metadata"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              >
+                <source src="/videos/Islamic_Orphan_Video_Created.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              
+              {/* Custom Play Button Overlay (shows before playing) */}
+              {!isPlaying && (
+                <div 
+                  className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-accent-500/20 cursor-pointer group"
+                  onClick={handlePlayVideo}
+                >
+                  <div className="w-16 h-16 rounded-full bg-primary-500/90 flex items-center justify-center group-hover:bg-primary-600 transition-all group-hover:scale-110 duration-300 shadow-lg">
+                    <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                  </div>
                 </div>
-              </div>
-              {/* Placeholder text */}
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="bg-navy-900/80 backdrop-blur-sm p-3 rounded-lg">
-                  <p className="text-sm text-slate-300">
-                    Watch: Stories that move hearts
-                  </p>
+              )}
+              
+              {/* Video caption (shows when not playing) */}
+              {!isPlaying && (
+                <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
+                  <div className="bg-navy-900/80 backdrop-blur-sm p-3 rounded-lg">
+                    <p className="text-sm text-slate-300">
+                      Watch: Stories that move hearts
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Info Cards Grid */}
