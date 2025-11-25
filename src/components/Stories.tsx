@@ -26,11 +26,11 @@ const stories = [
   },
   {
     name: 'Yusuf, 7',
-    location: 'Rohingya camp, Cox's Bazar',
+    location: "Rohingya camp, Cox's Bazar",
     quote: 'He can walk again, alhamdulillah.',
     story:
       'Born with a leg deformity. A volunteer connected his case to a medical charity. Surgery changed his life.',
-    reminder: 'Your voice can be someone's miracle.',
+    reminder: "Your voice can be someone's miracle.",
     color: 'sky',
     image: '/images/yusuf.jpg', // Placeholder - need real image
   },
