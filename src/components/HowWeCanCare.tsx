@@ -1,12 +1,8 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { BookOpen, Heart, Gift, Megaphone } from 'lucide-react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useFadeInUp } from '@/hooks/useGsapAnimations'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const careCards = [
   {
@@ -40,58 +36,64 @@ const careCards = [
 ]
 
 export function HowWeCanCare() {
-  const badgeRef = useFadeInUp()
-  const headingRef = useFadeInUp({ delay: 0.2 })
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!cardsRef.current) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!isVisible || !cardsRef.current) return
 
     const cards = cardsRef.current.querySelectorAll('.care-card')
 
-    // Initial animation
-    gsap.from(cards, {
-      opacity: 0,
-      y: 50,
-      duration: 0.6,
-      stagger: 0.15,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: cardsRef.current,
-        start: 'top 80%',
-        toggleActions: 'play none none none', // Changed: Don't reverse on scroll up
+    // Animate cards in with stagger
+    gsap.fromTo(
+      cards,
+      {
+        opacity: 0,
+        y: 50,
       },
-    })
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: 'power3.out',
+        clearProps: 'all', // Clear inline styles after animation
+      }
+    )
 
-    // Hover animations for each card
+    // Setup hover animations
     cards.forEach((card) => {
       const icon = card.querySelector('.card-icon')
-      const tl = gsap.timeline({ paused: true })
-
-      tl.to(card, {
-        y: -10,
-        duration: 0.3,
-        ease: 'power2.out',
+      
+      card.addEventListener('mouseenter', () => {
+        gsap.to(card, { y: -10, duration: 0.3, ease: 'power2.out' })
+        gsap.to(icon, { scale: 1.15, rotate: 5, duration: 0.3, ease: 'back.out(2)' })
       })
-      tl.to(
-        icon,
-        {
-          scale: 1.15,
-          rotate: 5,
-          duration: 0.3,
-          ease: 'back.out(2)',
-        },
-        0
-      )
-
-      card.addEventListener('mouseenter', () => tl.play())
-      card.addEventListener('mouseleave', () => tl.reverse())
+      
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { y: 0, duration: 0.3, ease: 'power2.out' })
+        gsap.to(icon, { scale: 1, rotate: 0, duration: 0.3, ease: 'back.out(2)' })
+      })
     })
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
-    }
-  }, [])
+  }, [isVisible])
 
   const getColorClass = (color: string) => {
     switch (color) {
@@ -107,15 +109,14 @@ export function HowWeCanCare() {
   }
 
   return (
-    <section id="care" className="section py-20 bg-navy-900/50">
+    <section ref={sectionRef} id="care" className="section py-20 bg-navy-900/50">
       <div className="container">
         <div className="text-center mb-12">
-          <span ref={badgeRef as any} className="badge mb-4">
+          <span className={`badge mb-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
             How We Can Care
           </span>
           <h2
-            ref={headingRef as any}
-            className="text-3xl lg:text-4xl font-bold text-slate-50"
+            className={`text-3xl lg:text-4xl font-bold text-slate-50 ${isVisible ? 'animate-fade-in-up animation-delay-200' : 'opacity-0'}`}
           >
             Practical ways to remember the yatim.
           </h2>

@@ -1,6 +1,7 @@
 'use client'
 
-import { useStaggerAnimation, useFadeInUp } from '@/hooks/useGsapAnimations'
+import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
 import Image from 'next/image'
 
 const stories = [
@@ -37,9 +38,49 @@ const stories = [
 ]
 
 export function Stories() {
-  const badgeRef = useFadeInUp()
-  const headingRef = useFadeInUp({ delay: 0.2 })
-  const cardsRef = useStaggerAnimation({ stagger: 0.2, y: 60 })
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!isVisible || !cardsRef.current) return
+
+    const cards = cardsRef.current.children
+
+    // Animate cards in with stagger
+    gsap.fromTo(
+      cards,
+      {
+        opacity: 0,
+        y: 60,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: 'power3.out',
+        clearProps: 'all', // Clear inline styles after animation
+      }
+    )
+  }, [isVisible])
 
   const getQuoteColor = (color: string) => {
     switch (color) {
@@ -55,22 +96,21 @@ export function Stories() {
   }
 
   return (
-    <section id="stories" className="section py-20">
+    <section ref={sectionRef} id="stories" className="section py-20">
       <div className="container">
         <div className="text-center mb-12">
-          <span ref={badgeRef as any} className="badge mb-4">
+          <span className={`badge mb-4 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
             Stories
           </span>
           <h2
-            ref={headingRef as any}
-            className="text-3xl lg:text-4xl font-bold text-slate-50"
+            className={`text-3xl lg:text-4xl font-bold text-slate-50 ${isVisible ? 'animate-fade-in-up animation-delay-200' : 'opacity-0'}`}
           >
             Faces that remind us why it matters.
           </h2>
         </div>
 
         <div
-          ref={cardsRef as any}
+          ref={cardsRef}
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {stories.map((story, index) => (
